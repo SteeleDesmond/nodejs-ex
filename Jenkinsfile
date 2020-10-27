@@ -16,17 +16,17 @@ pipeline {
           }
       }
       stage('build') {
-        // script {
-        //   openshift.withCluster() {
-        //       openshift.withProject() {
-        //         def builds = openshift.selector("bc", appName).related('builds')
-        //         timeout(5) { 
-        //           builds.untilEach(1) {
-        //             return (it.object().status.phase == "Complete")
-        //           }
-        //         }
-        //       }
-        //   }
+        script {
+          openshift.withCluster() {
+              openshift.withProject() {
+                def builds = openshift.selector("bc", appName).related('builds')
+                timeout(5) { 
+                  builds.untilEach(1) {
+                    return (it.object().status.phase == "Complete")
+                  }
+                }
+              }
+          }
           steps {
               sh 'npm install'
           }
