@@ -1,0 +1,55 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: nodejs-mongodb-example
+  namespace: srd-dev
+  selfLink: >-
+    /apis/build.openshift.io/v1/namespaces/srd-dev/buildconfigs/nodejs-mongodb-example
+  uid: 627143ae-e3cb-4efe-87a2-67a33c684933
+  resourceVersion: '25345034'
+  creationTimestamp: '2020-10-26T16:26:27Z'
+  labels:
+    app: nodejs-mongodb-example
+    template: nodejs-mongodb-example
+  annotations:
+    description: Defines how to build the application
+    template.alpha.openshift.io/wait-for-ready: 'true'
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'nodejs-mongodb-example:latest'
+  resources: {}
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: 'nodejs:10'
+      env:
+        - name: NPM_MIRROR
+  postCommit:
+    script: npm test
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/SteeleDesmond/nodejs-ex.git'
+  triggers:
+    - type: ImageChange
+      imageChange:
+        lastTriggeredImageID: >-
+          image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:94f29eed99e9053b916e50df94db3d1fa875f5307fa6bc19d5d516eb5e468d6f
+    - type: ConfigChange
+    - type: GitHub
+      github:
+        secret: mbpEjRy2uvvO3UWCCMoOTXdaQGO3IaJ0nodLnPNi
+    - type: Generic
+      generic:
+        secret: j7d3CAMAvwpcrsnxwNlHcFOBqGIQyywNfjG0YOBp
+  runPolicy: Serial
+status:
+  lastVersion: 2
